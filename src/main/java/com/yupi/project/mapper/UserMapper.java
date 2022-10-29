@@ -1,10 +1,10 @@
 package com.yupi.project.mapper;
 
-import com.yupi.project.model.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.yupi.project.model.entity.User;
 
 /**
- * UserMapper
+ * @Entity com.yupi.project.model.domain.User
  */
 public interface UserMapper extends BaseMapper<User> {
 

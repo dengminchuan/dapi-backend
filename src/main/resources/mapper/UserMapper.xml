@@ -6,25 +6,21 @@
 
     <resultMap id="BaseResultMap" type="com.yupi.project.model.entity.User">
         <id property="id" column="id" jdbcType="BIGINT"/>
-        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="userName" column="userName" jdbcType="VARCHAR"/>
         <result property="userAccount" column="userAccount" jdbcType="VARCHAR"/>
-        <result property="avatarUrl" column="avatarUrl" jdbcType="VARCHAR"/>
+        <result property="userAvatar" column="userAvatar" jdbcType="VARCHAR"/>
         <result property="gender" column="gender" jdbcType="TINYINT"/>
+        <result property="userRole" column="userRole" jdbcType="VARCHAR"/>
         <result property="userPassword" column="userPassword" jdbcType="VARCHAR"/>
-        <result property="phone" column="phone" jdbcType="VARCHAR"/>
-        <result property="email" column="email" jdbcType="VARCHAR"/>
-        <result property="userStatus" column="userStatus" jdbcType="INTEGER"/>
         <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
         <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
-        <result property="userRole" column="userRole" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,username,userAccount,
-        avatarUrl,gender,userPassword,
-        phone,email,userStatus,
-        createTime,updateTime,isDelete,
-        userRole
+        id,userName,userAccount,
+        userAvatar,gender,userRole,
+        userPassword,createTime,updateTime,
+        isDelete
     </sql>
 </mapper>

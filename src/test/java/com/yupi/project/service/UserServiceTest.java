@@ -21,13 +21,6 @@ class UserServiceTest {
     @Test
     void testAddUser() {
         User user = new User();
-        user.setUsername("dogYupi");
-        user.setUserAccount("123");
-        user.setAvatarUrl("");
-        user.setGender(0);
-        user.setUserPassword("xxx");
-        user.setPhone("123");
-        user.setEmail("456");
         boolean result = userService.save(user);
         System.out.println(user.getId());
         Assertions.assertTrue(result);
@@ -36,14 +29,6 @@ class UserServiceTest {
     @Test
     void testUpdateUser() {
         User user = new User();
-        user.setId(1);
-        user.setUsername("dogYupi");
-        user.setUserAccount("123");
-        user.setAvatarUrl("");
-        user.setGender(0);
-        user.setUserPassword("xxx");
-        user.setPhone("123");
-        user.setEmail("456");
         boolean result = userService.updateById(user);
         Assertions.assertTrue(result);
     }

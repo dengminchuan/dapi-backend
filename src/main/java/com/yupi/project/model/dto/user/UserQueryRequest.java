@@ -1,23 +1,23 @@
-package com.yupi.project.model.entity;
+package com.yupi.project.model.dto.user;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.yupi.project.common.PageRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 用户
+ * 用户查询请求
  *
- * @TableName user
+ * @author yupi
  */
-@TableName(value = "user")
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class User implements Serializable {
+public class UserQueryRequest extends PageRequest implements Serializable {
     /**
      * id
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -46,11 +46,6 @@ public class User implements Serializable {
     private String userRole;
 
     /**
-     * 密码
-     */
-    private String userPassword;
-
-    /**
      * 创建时间
      */
     private Date createTime;
@@ -60,12 +55,5 @@ public class User implements Serializable {
      */
     private Date updateTime;
 
-    /**
-     * 是否删除
-     */
-    @TableLogic
-    private Integer isDelete;
-
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

@@ -33,11 +33,10 @@ public class ResultUtils {
      *
      * @param code
      * @param message
-     * @param description
      * @return
      */
-    public static BaseResponse error(int code, String message, String description) {
-        return new BaseResponse(code, null, message, description);
+    public static BaseResponse error(int code, String message) {
+        return new BaseResponse(code, null, message);
     }
 
     /**
@@ -46,17 +45,7 @@ public class ResultUtils {
      * @param errorCode
      * @return
      */
-    public static BaseResponse error(ErrorCode errorCode, String message, String description) {
-        return new BaseResponse(errorCode.getCode(), null, message, description);
-    }
-
-    /**
-     * 失败
-     *
-     * @param errorCode
-     * @return
-     */
-    public static BaseResponse error(ErrorCode errorCode, String description) {
-        return new BaseResponse(errorCode.getCode(), errorCode.getMessage(), description);
+    public static BaseResponse error(ErrorCode errorCode, String message) {
+        return new BaseResponse(errorCode.getCode(), null, message);
     }
 }
