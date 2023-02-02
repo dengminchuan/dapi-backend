@@ -15,6 +15,7 @@ import org.springframework.util.DigestUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+
 import static com.yupi.project.constant.UserConstant.ADMIN_ROLE;
 import static com.yupi.project.constant.UserConstant.USER_LOGIN_STATE;
 
@@ -35,7 +36,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     /**
      * 盐值，混淆密码
      */
-    private static final String SALT = "yupi";
+    private static final String SALT = "DApi";
 
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
@@ -92,7 +93,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 查询用户是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userAccount", userAccount);
-        queryWrapper.eq("userPassword", encryptPassword);
+        queryWrapper.eq("userPassword", userPassword);
         User user = userMapper.selectOne(queryWrapper);
         // 用户不存在
         if (user == null) {

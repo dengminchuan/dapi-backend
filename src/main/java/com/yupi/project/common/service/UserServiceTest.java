@@ -1,6 +1,12 @@
-package com.yupi.project.service;
+package com.yupi.project.common.service;
 
+import cn.hutool.core.lang.Console;
+import cn.hutool.http.Header;
+import cn.hutool.http.HttpRequest;
+import com.dapi.dapiclientsdk.DApiClientConfig;
+import com.dapi.dapiclientsdk.client.DApiClient;
 import com.yupi.project.model.entity.User;
+import com.yupi.project.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -77,5 +83,20 @@ class UserServiceTest {
         } catch (Exception e) {
 
         }
+    }
+    @Test
+    void testHttpUtil(){
+        //链式构建请求
+        String result2 = HttpRequest.get("www.baidu.com")
+                .header(Header.USER_AGENT, "Hutool http")//头信息，多个头信息多次调用此方法即可
+                .timeout(20000)//超时，毫秒
+                .execute().body();
+        System.out.println(result2);
+    }
+    @Resource
+    DApiClient dApiClient;
+    @Test
+    void testStarter(){
+        System.out.println(dApiClient.getRandomInt(10));
     }
 }

@@ -1,9 +1,12 @@
 package com.yupi.project.common;
 
+import com.yupi.project.constant.UserConstant;
+
+
+
 /**
  * 返回工具类
  *
- * @author yupi
  */
 public class ResultUtils {
 
@@ -15,7 +18,9 @@ public class ResultUtils {
      * @return
      */
     public static <T> BaseResponse<T> success(T data) {
+        
         return new BaseResponse<>(0, data, "ok");
+
     }
 
     /**

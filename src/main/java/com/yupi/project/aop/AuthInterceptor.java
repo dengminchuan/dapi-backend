@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 /**
  * 权限校验 AOP
  *
- * @author yupi
  */
 @Aspect
 @Component
@@ -55,6 +54,7 @@ public class AuthInterceptor {
             if (!anyRole.contains(userRole)) {
                 throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
             }
+
         }
         // 必须有所有权限才通过
         if (StringUtils.isNotBlank(mustRole)) {

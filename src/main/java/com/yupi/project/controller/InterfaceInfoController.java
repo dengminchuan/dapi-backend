@@ -26,9 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * 帖子接口
  *
- * @author yupi
+ *
  */
 @RestController
 @RequestMapping("/InterfaceInfo")
@@ -41,7 +40,6 @@ public class InterfaceInfoController {
     @Resource
     private UserService userService;
 
-    // region 增删改查
 
     /**
      * 创建
@@ -149,7 +147,7 @@ public class InterfaceInfoController {
      * @param InterfaceInfoQueryRequest
      * @return
      */
-    @AuthCheck(mustRole = "admin")
+//    @AuthCheck(mustRole = "admin")
     @GetMapping("/list")
     public BaseResponse<List<InterfaceInfo>> listInterfaceInfo(InterfaceInfoQueryRequest InterfaceInfoQueryRequest) {
         InterfaceInfo InterfaceInfoQuery = new InterfaceInfo();
