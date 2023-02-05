@@ -64,6 +64,9 @@ public class InterfaceInfoQueryRequest extends PageRequest implements Serializab
      */
     private String method;
 
+    private String responseBody;
+
+    private String requestBody;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

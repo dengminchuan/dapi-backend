@@ -26,7 +26,7 @@ public class User implements Serializable {
     private String userName;
 
     /**
-     * 账号
+     * 账号>4
      */
     private String userAccount;
 
@@ -46,7 +46,7 @@ public class User implements Serializable {
     private String userRole;
 
     /**
-     * 密码
+     * 密码>8
      */
     private String userPassword;
 

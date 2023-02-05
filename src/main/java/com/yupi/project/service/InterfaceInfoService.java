@@ -12,4 +12,8 @@ import com.yupi.project.model.entity.Post;
 public interface InterfaceInfoService extends IService<InterfaceInfo> {
 
     void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add);
+
+   String getWithPathParameters(String url);
+
+    String getWithJsonParameters(String url,String requestBody);
 }

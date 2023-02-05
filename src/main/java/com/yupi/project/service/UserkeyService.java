@@ -11,4 +11,7 @@ import com.yupi.project.model.entity.Userkey;
 */
 public interface UserkeyService extends IService<Userkey> {
 
+    void setKey(long userId);
+
+    Userkey getKey(long userId);
 }

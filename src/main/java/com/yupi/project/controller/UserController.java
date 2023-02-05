@@ -11,8 +11,10 @@ import com.yupi.project.exception.BusinessException;
 import com.yupi.project.model.dto.*;
 import com.yupi.project.model.dto.user.*;
 import com.yupi.project.model.entity.User;
+import com.yupi.project.model.entity.Userkey;
 import com.yupi.project.model.vo.UserVO;
 import com.yupi.project.service.UserService;
+import com.yupi.project.service.UserkeyService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -36,10 +38,13 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private UserkeyService userkeyService;
+
     // region 登录相关
 
     /**
-     * 用户注册
+     * 用户注册并分配ak和sk
      *
      * @param userRegisterRequest
      * @return
@@ -56,6 +61,8 @@ public class UserController {
             return null;
         }
         long result = userService.userRegister(userAccount, userPassword, checkPassword);
+        //生成ak和sk
+        userkeyService.setKey(result);
         return ResultUtils.success(result);
     }
 

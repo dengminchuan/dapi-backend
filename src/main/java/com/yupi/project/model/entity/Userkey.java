@@ -14,11 +14,17 @@ import java.io.Serializable;
 @TableName(value ="userkey")
 @Data
 public class Userkey implements Serializable {
+    public Userkey(Long userId, String accessKey, String secretKey) {
+        this.userId = userId;
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
+    }
+
     /**
      * 
      */
     @TableId
-    private Integer userId;
+    private Long userId;
 
     /**
      * 

@@ -1,7 +1,11 @@
 package com.yupi.project.service.impl;
 
 
+import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.IdUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yupi.project.common.BaseResponse;
 import com.yupi.project.mapper.UserkeyMapper;
 import com.yupi.project.model.entity.Userkey;
 import com.yupi.project.service.UserkeyService;
@@ -16,6 +20,22 @@ import org.springframework.stereotype.Service;
 public class UserkeyServiceImpl extends ServiceImpl<UserkeyMapper, Userkey>
     implements UserkeyService {
 
+    @Override
+    public void setKey(long userId) {
+        String accessKey;
+        String secretKey;
+        synchronized (this){
+            //5位accessKey,8位secretKey
+            accessKey = IdUtil.simpleUUID().substring(0, 5);
+            secretKey = IdUtil.simpleUUID().substring(0, 8);
+        }
+        save(new Userkey(userId,accessKey,secretKey));
+    }
+
+    @Override
+    public Userkey getKey(long userId) {
+        return  getOne(new QueryWrapper<Userkey>().eq("userId", userId));
+    }
 }
 
 

@@ -75,6 +75,10 @@ public class InterfaceInfo implements Serializable {
     @TableLogic
     private Integer isDelete;
 
+    private String responseBody;
+
+    private String requestBody;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

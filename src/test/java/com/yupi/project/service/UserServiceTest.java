@@ -1,8 +1,10 @@
-package com.yupi.project.common.service;
+package com.yupi.project.service;
 
 import cn.hutool.core.lang.Console;
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.json.JSONUtil;
 import com.dapi.dapiclientsdk.DApiClientConfig;
 import com.dapi.dapiclientsdk.client.DApiClient;
 import com.yupi.project.model.entity.User;
@@ -10,6 +12,7 @@ import com.yupi.project.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
 
 import javax.annotation.Resource;
 
@@ -98,5 +101,20 @@ class UserServiceTest {
     @Test
     void testStarter(){
         System.out.println(dApiClient.getRandomInt(10));
+
+    }
+    @Test
+    void testInterface(){
+        try (HttpResponse httpResponse = HttpRequest.get("localhost:10086/DApi/random/8").execute()) {
+            System.out.println(httpResponse.body());
+        }
+    }
+    @Test
+    void testGetJson(){
+        String json = "{\"number\":10,\"message\":\"傻逼\"}";
+        String result2 = HttpRequest.get("localhost:10086/DApi/random/get/json")
+                .body(json).header("contentType","application/json;charset=utf8")
+                .execute().body();
+        System.out.println(result2);
     }
 }

@@ -1,8 +1,8 @@
 package com.yupi.project.controller;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.yupi.project.annotation.AuthCheck;
 import com.yupi.project.common.BaseResponse;
 import com.yupi.project.common.DeleteRequest;
 import com.yupi.project.common.ErrorCode;
@@ -12,6 +12,7 @@ import com.yupi.project.exception.BusinessException;
 import com.yupi.project.model.dto.interfaceInfo.InterfaceInfoAddRequest;
 import com.yupi.project.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
 import com.yupi.project.model.dto.interfaceInfo.InterfaceInfoUpdateRequest;
+import com.yupi.project.model.dto.interfaceInfo.InterfaceInvokeRequest;
 import com.yupi.project.model.entity.InterfaceInfo;
 import com.yupi.project.model.entity.User;
 import com.yupi.project.service.InterfaceInfoService;
@@ -22,6 +23,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.annotation.Resources;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -36,6 +38,9 @@ public class InterfaceInfoController {
 
     @Resource
     private InterfaceInfoService InterfaceInfoService;
+
+    @Resource
+    private InterfaceInfoService interfaceInfoService;
 
     @Resource
     private UserService userService;
@@ -79,15 +84,19 @@ public class InterfaceInfoController {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User user = userService.getLoginUser(request);
+        Integer userId = deleteRequest.getUserId();
         long id = deleteRequest.getId();
         // 判断是否存在
         InterfaceInfo oldInterfaceInfo = InterfaceInfoService.getById(id);
         if (oldInterfaceInfo == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        // 仅本人或管理员可删除
-        if (!oldInterfaceInfo.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
+        // 仅管理员可删除
+        User user = userService.getById(userId);
+        if(user==null){
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        if (!user.getUserRole().equals("admin")) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         boolean b = InterfaceInfoService.removeById(id);
@@ -191,7 +200,37 @@ public class InterfaceInfoController {
         Page<InterfaceInfo> InterfaceInfoPage = InterfaceInfoService.page(new Page<>(current, size), queryWrapper);
         return ResultUtils.success(InterfaceInfoPage);
     }
+    @PostMapping("/invoke")
+    public BaseResponse<String> invokeInterface(@RequestBody InterfaceInvokeRequest interfaceInvokeRequest,HttpServletRequest request){
+        //访问后端接口
 
-    // endregion
+        Long interfaceId = interfaceInvokeRequest.getId();
+        String url = interfaceInvokeRequest.getUrl();
+        String requestBody = interfaceInvokeRequest.getRequestBody();
+        String responseBody = interfaceInvokeRequest.getResponseBody();
+        log.info("请求url:{},请求的接口id:{},请求体为:{}",url,interfaceId,requestBody);
+        if(StringUtils.isBlank(url)||interfaceId==null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        //如果网址不一样且请求方式为get说明为{param}方式，则直接访问，失败则报错。
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(interfaceId);
+        if(!StringUtils.equals(url,interfaceInfo.getUrl())&&StringUtils.equalsIgnoreCase("GET",interfaceInfo.getMethod())){
+            log.info("执行get的路径参数请求");
+            String result = interfaceInfoService.getWithPathParameters(url);
+            return ResultUtils.success(result);
+        }
+        //其他情况
+        //1.get请求但参数为JSON格式
+        if(StringUtils.equalsIgnoreCase("GET",interfaceInfo.getMethod())&& JSONUtil.isTypeJSON(requestBody)){
+            log.info("执行post参数get请求");
+            String result=interfaceInfoService.getWithJsonParameters(url,requestBody);
+            return ResultUtils.success(result);
+
+        }
+
+
+        return null;
+    }
 
 }

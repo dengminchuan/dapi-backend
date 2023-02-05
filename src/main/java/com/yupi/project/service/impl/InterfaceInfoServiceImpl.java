@@ -1,5 +1,7 @@
 package com.yupi.project.service.impl;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yupi.project.common.ErrorCode;
 import com.yupi.project.exception.BusinessException;
@@ -32,6 +34,23 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
         }
         if (StringUtils.isNotBlank(name) && name.length() > 50) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "内容过长");
+        }
+    }
+
+    @Override
+    public String getWithPathParameters(String url) {
+        //访问网址
+        try (HttpResponse httpResponse = HttpRequest.get(url).execute()) {
+            String body = httpResponse.body();
+            return body;
+        }
+    }
+
+    @Override
+    public String getWithJsonParameters(String url, String requestBody) {
+        try (HttpResponse httpResponse = HttpRequest.get(url).body(requestBody).execute()) {
+            String body = httpResponse.body();
+            return body;
         }
     }
 }
