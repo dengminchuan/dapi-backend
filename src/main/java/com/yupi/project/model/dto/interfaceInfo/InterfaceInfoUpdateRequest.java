@@ -58,8 +58,13 @@ public class InterfaceInfoUpdateRequest implements Serializable {
      */
     private String method;
 
+    private String requestBody;
 
-
+    private String responseBody;
+    /**
+     * 创建者id
+     */
+    private Long userId;
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

@@ -1,6 +1,8 @@
 package com.yupi.project.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.yupi.project.common.BaseSearch;
 import com.yupi.project.model.entity.InterfaceInfo;
 import com.yupi.project.model.entity.Post;
 
@@ -16,4 +18,8 @@ public interface InterfaceInfoService extends IService<InterfaceInfo> {
    String getWithPathParameters(String url);
 
     String getWithJsonParameters(String url,String requestBody);
+
+    String postWithJson(String url, String requestBody);
+
+    Page<InterfaceInfo> searchByCondition(BaseSearch baseSearch);
 }

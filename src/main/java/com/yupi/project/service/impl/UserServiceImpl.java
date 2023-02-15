@@ -1,11 +1,15 @@
 package com.yupi.project.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yupi.project.common.ErrorCode;
 import com.yupi.project.exception.BusinessException;
 import com.yupi.project.mapper.UserMapper;
+import com.yupi.project.mapper.UserkeyMapper;
 import com.yupi.project.model.entity.User;
+import com.yupi.project.model.entity.Userkey;
+import com.yupi.project.model.vo.UserVO;
 import com.yupi.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +37,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Resource
     private UserMapper userMapper;
 
+    @Resource
+    private UserkeyMapper userKeyMapper;
     /**
      * 盐值，混淆密码
      */
@@ -67,7 +73,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             // 3. 插入数据
             User user = new User();
             user.setUserAccount(userAccount);
-            user.setUserPassword(encryptPassword);
+            user.setUserPassword(userPassword);
             boolean saveResult = this.save(user);
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
@@ -77,7 +83,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
+    public UserVO userLogin(String userAccount, String userPassword, HttpServletRequest request) {
         // 1. 校验
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
@@ -100,9 +106,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             log.info("user login failed, userAccount cannot match userPassword");
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
+        Userkey userkey = userKeyMapper.selectById(user.getId());
+        UserVO userVO = new UserVO();
+        BeanUtil.copyProperties(user,userVO);
+        BeanUtil.copyProperties(userkey,userVO);
         // 3. 记录用户的登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, user);
-        return user;
+        return userVO;
     }
 
     /**

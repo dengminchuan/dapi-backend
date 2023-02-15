@@ -3,10 +3,7 @@ package com.yupi.project.controller;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.yupi.project.common.BaseResponse;
-import com.yupi.project.common.DeleteRequest;
-import com.yupi.project.common.ErrorCode;
-import com.yupi.project.common.ResultUtils;
+import com.yupi.project.common.*;
 import com.yupi.project.constant.CommonConstant;
 import com.yupi.project.exception.BusinessException;
 import com.yupi.project.model.dto.interfaceInfo.InterfaceInfoAddRequest;
@@ -15,16 +12,19 @@ import com.yupi.project.model.dto.interfaceInfo.InterfaceInfoUpdateRequest;
 import com.yupi.project.model.dto.interfaceInfo.InterfaceInvokeRequest;
 import com.yupi.project.model.entity.InterfaceInfo;
 import com.yupi.project.model.entity.User;
+import com.yupi.project.model.entity.Userkey;
 import com.yupi.project.service.InterfaceInfoService;
 import com.yupi.project.service.UserService;
+import com.yupi.project.service.UserkeyService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.annotation.Resources;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.transform.Result;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,7 +33,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/InterfaceInfo")
-@Slf4j
+@Slf4j(topic = "interfaceInfo")
 public class InterfaceInfoController {
 
     @Resource
@@ -44,31 +44,32 @@ public class InterfaceInfoController {
 
     @Resource
     private UserService userService;
+    @Resource
+    private UserkeyService userkeyService;
 
 
     /**
      * 创建
      *
-     * @param InterfaceInfoAddRequest
+     * @param interfaceInfoAddRequest
      * @param request
      * @return
      */
     @PostMapping("/add")
-    public BaseResponse<Long> addInterfaceInfo(@RequestBody InterfaceInfoAddRequest InterfaceInfoAddRequest, HttpServletRequest request) {
-        if (InterfaceInfoAddRequest == null) {
+    public BaseResponse<Long> addInterfaceInfo(@RequestBody InterfaceInfoAddRequest interfaceInfoAddRequest, HttpServletRequest request) {
+        if (interfaceInfoAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        InterfaceInfo InterfaceInfo = new InterfaceInfo();
-        BeanUtils.copyProperties(InterfaceInfoAddRequest, InterfaceInfo);
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        BeanUtils.copyProperties(interfaceInfoAddRequest, interfaceInfo);
+        interfaceInfo.setUpdateTime(new Date());
         // 校验
-        InterfaceInfoService.validInterfaceInfo(InterfaceInfo, true);
-        User loginUser = userService.getLoginUser(request);
-        InterfaceInfo.setUserId(String.valueOf(loginUser.getId()));
-        boolean result = InterfaceInfoService.save(InterfaceInfo);
+        InterfaceInfoService.validInterfaceInfo(interfaceInfo, true);
+        boolean result = InterfaceInfoService.save(interfaceInfo);
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
         }
-        long newInterfaceInfoId = InterfaceInfo.getId();
+        long newInterfaceInfoId = interfaceInfo.getId();
         return ResultUtils.success(newInterfaceInfoId);
     }
 
@@ -106,33 +107,31 @@ public class InterfaceInfoController {
     /**
      * 更新
      *
-     * @param InterfaceInfoUpdateRequest
+     * @param interfaceInfoUpdateRequest
      * @param request
      * @return
      */
     @PostMapping("/update")
-    public BaseResponse<Boolean> updateInterfaceInfo(@RequestBody InterfaceInfoUpdateRequest InterfaceInfoUpdateRequest,
+    public BaseResponse<Boolean> updateInterfaceInfo(@RequestBody InterfaceInfoUpdateRequest interfaceInfoUpdateRequest,
                                             HttpServletRequest request) {
-        if (InterfaceInfoUpdateRequest == null || InterfaceInfoUpdateRequest.getId() <= 0) {
+
+        if (interfaceInfoUpdateRequest == null || interfaceInfoUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        InterfaceInfo InterfaceInfo = new InterfaceInfo();
-        BeanUtils.copyProperties(InterfaceInfoUpdateRequest, InterfaceInfo);
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        BeanUtils.copyProperties(interfaceInfoUpdateRequest, interfaceInfo);
         // 参数校验
-        InterfaceInfoService.validInterfaceInfo(InterfaceInfo, false);
-        User user = userService.getLoginUser(request);
-        long id = InterfaceInfoUpdateRequest.getId();
-        // 判断是否存在
-        InterfaceInfo oldInterfaceInfo = InterfaceInfoService.getById(id);
-        if (oldInterfaceInfo == null) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-        }
+        InterfaceInfoService.validInterfaceInfo(interfaceInfo, false);
+        interfaceInfo.setUpdateTime(new Date());
         // 仅本人或管理员可修改
-        if (!oldInterfaceInfo.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        Long userId = Long.valueOf(request.getHeader("updateId"));
+        User user = userService.getById(userId);
+        if(user.getUserRole()=="admin"||interfaceInfoUpdateRequest.getUserId()==userId){
+            boolean result = InterfaceInfoService.updateById(interfaceInfo);
+            return ResultUtils.success(result);
         }
-        boolean result = InterfaceInfoService.updateById(InterfaceInfo);
-        return ResultUtils.success(result);
+       return ResultUtils.error(ErrorCode.NO_AUTH_ERROR);
+
     }
 
     /**
@@ -201,20 +200,44 @@ public class InterfaceInfoController {
         return ResultUtils.success(InterfaceInfoPage);
     }
     @PostMapping("/invoke")
-    public BaseResponse<String> invokeInterface(@RequestBody InterfaceInvokeRequest interfaceInvokeRequest,HttpServletRequest request){
-        //访问后端接口
+    public BaseResponse<String> invokeInterface(@RequestBody InterfaceInvokeRequest interfaceInvokeRequest, HttpServletRequest request){
+        //访问后端接口,ak sk 签名认证
 
         Long interfaceId = interfaceInvokeRequest.getId();
         String url = interfaceInvokeRequest.getUrl();
         String requestBody = interfaceInvokeRequest.getRequestBody();
         String responseBody = interfaceInvokeRequest.getResponseBody();
         log.info("请求url:{},请求的接口id:{},请求体为:{}",url,interfaceId,requestBody);
+        //签名认证
+        String accessKey = request.getHeader("accessKey");
+        String sign = request.getHeader("sign");
+        Integer nonce = Integer.valueOf(request.getHeader("nonce"));
+        if(StringUtils.isAnyBlank(sign,accessKey)){
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
+        }
+        log.info("sign:{},accessKey:{}",sign,accessKey);
+        Userkey userKey = userkeyService.getOne(new QueryWrapper<Userkey>().eq("accessKey", accessKey));
+        if(userKey==null){
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
+        }
+        boolean signRight = SignUtil.checkSign(sign,nonce,userKey.getAccessKey(), String.valueOf(userKey.getUserId()), userKey.getSecretKey());
+        if(!signRight){
+            //签名校验失败
+            log.info("签名校验失败");
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
+        }
+
+
         if(StringUtils.isBlank(url)||interfaceId==null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
         //如果网址不一样且请求方式为get说明为{param}方式，则直接访问，失败则报错。
         InterfaceInfo interfaceInfo = interfaceInfoService.getById(interfaceId);
+        //接口是关闭状态
+        if(interfaceInfo.getStatus()==0){
+            return ResultUtils.error(ErrorCode.FORBIDDEN_ERROR);
+        }
         if(!StringUtils.equals(url,interfaceInfo.getUrl())&&StringUtils.equalsIgnoreCase("GET",interfaceInfo.getMethod())){
             log.info("执行get的路径参数请求");
             String result = interfaceInfoService.getWithPathParameters(url);
@@ -226,11 +249,26 @@ public class InterfaceInfoController {
             log.info("执行post参数get请求");
             String result=interfaceInfoService.getWithJsonParameters(url,requestBody);
             return ResultUtils.success(result);
-
+        }
+        //2.post请求
+        if(StringUtils.equalsIgnoreCase("POST",interfaceInfo.getMethod())){
+            log.info("执行POST请求");
+            String result=interfaceInfoService.postWithJson(url,requestBody);
+            return ResultUtils.success(result);
         }
 
 
-        return null;
+        return ResultUtils.error(200,"参数错误");
+    }
+    @GetMapping("/search")
+    public BaseResponse<Page<InterfaceInfo>> searchByCondition(BaseSearch baseSearch,HttpServletRequest request){
+        Page<InterfaceInfo> pageInfo=interfaceInfoService.searchByCondition(baseSearch);
+        //数据库实现搜索功能
+        return ResultUtils.success(pageInfo);
+    }
+    @GetMapping("/nonce")
+    public BaseResponse<Integer> getNonce(){
+        return ResultUtils.success(SignUtil.getNonce());
     }
 
 }

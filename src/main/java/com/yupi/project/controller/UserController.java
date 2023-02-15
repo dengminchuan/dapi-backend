@@ -8,7 +8,6 @@ import com.yupi.project.common.DeleteRequest;
 import com.yupi.project.common.ErrorCode;
 import com.yupi.project.common.ResultUtils;
 import com.yupi.project.exception.BusinessException;
-import com.yupi.project.model.dto.*;
 import com.yupi.project.model.dto.user.*;
 import com.yupi.project.model.entity.User;
 import com.yupi.project.model.entity.Userkey;
@@ -40,6 +39,7 @@ public class UserController {
 
     @Resource
     private UserkeyService userkeyService;
+
 
     // region 登录相关
 
@@ -74,7 +74,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
-    public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
+    public BaseResponse<UserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -84,7 +84,7 @@ public class UserController {
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User user = userService.userLogin(userAccount, userPassword, request);
+        UserVO user = userService.userLogin(userAccount, userPassword, request);
         return ResultUtils.success(user);
     }
 
@@ -245,6 +245,9 @@ public class UserController {
         userVOPage.setRecords(userVOList);
         return ResultUtils.success(userVOPage);
     }
+    /**
+     * 获取用户的md5加密
+     */
 
-    // endregion
+
 }

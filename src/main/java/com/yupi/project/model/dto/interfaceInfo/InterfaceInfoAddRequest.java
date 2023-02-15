@@ -51,7 +51,18 @@ public class InterfaceInfoAddRequest implements Serializable {
      * 请求类型
      */
     private String method;
-
+    /*
+    JSON请求体
+     */
+    private String requestBody;
+    /*
+    响应体
+     */
+    private String responseBody;
+    /**
+     * userId
+     */
+    private Long userId;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

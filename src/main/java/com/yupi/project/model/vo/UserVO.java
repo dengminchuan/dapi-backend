@@ -28,6 +28,10 @@ public class UserVO implements Serializable {
     private String userAccount;
 
     /**
+     * 用户密码
+     */
+    private String userPassword;
+    /**
      * 用户头像
      */
     private String userAvatar;
@@ -51,6 +55,13 @@ public class UserVO implements Serializable {
      * 更新时间
      */
     private Date updateTime;
-
+    /**
+     * 用户ak
+     */
+    private String accessKey;
+    /**
+     * 用户sk
+     */
+    private String secretKey;
     private static final long serialVersionUID = 1L;
 }

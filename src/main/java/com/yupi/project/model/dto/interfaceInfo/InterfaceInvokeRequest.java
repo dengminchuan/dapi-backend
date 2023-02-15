@@ -17,6 +17,4 @@ public class InterfaceInvokeRequest {
     private String requestBody;
     //响应体
     private String responseBody;
-
-
 }

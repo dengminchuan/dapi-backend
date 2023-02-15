@@ -5,8 +5,11 @@ import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dapi.dapiclientsdk.DApiClientConfig;
 import com.dapi.dapiclientsdk.client.DApiClient;
+import com.yupi.project.common.BaseSearch;
+import com.yupi.project.model.entity.InterfaceInfo;
 import com.yupi.project.model.entity.User;
 import com.yupi.project.service.UserService;
 import org.junit.jupiter.api.Assertions;
@@ -26,6 +29,8 @@ class UserServiceTest {
 
     @Resource
     private UserService userService;
+    @Resource
+    private InterfaceInfoService interfaceInfoService;
 
     @Test
     void testAddUser() {
@@ -117,4 +122,5 @@ class UserServiceTest {
                 .execute().body();
         System.out.println(result2);
     }
+
 }

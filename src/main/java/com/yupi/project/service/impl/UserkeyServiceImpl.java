@@ -22,13 +22,9 @@ public class UserkeyServiceImpl extends ServiceImpl<UserkeyMapper, Userkey>
 
     @Override
     public void setKey(long userId) {
-        String accessKey;
-        String secretKey;
-        synchronized (this){
-            //5位accessKey,8位secretKey
-            accessKey = IdUtil.simpleUUID().substring(0, 5);
-            secretKey = IdUtil.simpleUUID().substring(0, 8);
-        }
+        //5位accessKey,8位secretKey
+        String accessKey = IdUtil.simpleUUID().substring(0, 5);
+        String secretKey = IdUtil.simpleUUID().substring(0, 8);
         save(new Userkey(userId,accessKey,secretKey));
     }
 
