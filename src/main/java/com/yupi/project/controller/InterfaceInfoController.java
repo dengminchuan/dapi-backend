@@ -19,6 +19,7 @@ import com.yupi.project.service.UserkeyService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -47,6 +48,8 @@ public class InterfaceInfoController {
     @Resource
     private UserkeyService userkeyService;
 
+    @Resource
+    private RedisTemplate<String,String> redisTemplate;
 
     /**
      * 创建
@@ -207,7 +210,6 @@ public class InterfaceInfoController {
         String url = interfaceInvokeRequest.getUrl();
         String requestBody = interfaceInvokeRequest.getRequestBody();
         String responseBody = interfaceInvokeRequest.getResponseBody();
-        log.info("请求url:{},请求的接口id:{},请求体为:{}",url,interfaceId,requestBody);
         //签名认证
         String accessKey = request.getHeader("accessKey");
         String sign = request.getHeader("sign");
@@ -215,19 +217,19 @@ public class InterfaceInfoController {
         if(StringUtils.isAnyBlank(sign,accessKey)){
             return ResultUtils.error(ErrorCode.PARAMS_ERROR);
         }
-        log.info("sign:{},accessKey:{}",sign,accessKey);
         Userkey userKey = userkeyService.getOne(new QueryWrapper<Userkey>().eq("accessKey", accessKey));
+        Long userId = userKey.getUserId();
         if(userKey==null){
             return ResultUtils.error(ErrorCode.PARAMS_ERROR);
         }
-        boolean signRight = SignUtil.checkSign(sign,nonce,userKey.getAccessKey(), String.valueOf(userKey.getUserId()), userKey.getSecretKey());
+        boolean signRight = SignUtil.checkSign(sign,nonce,userKey.getAccessKey(), String.valueOf(userId), userKey.getSecretKey());
         if(!signRight){
             //签名校验失败
             log.info("签名校验失败");
             return ResultUtils.error(ErrorCode.PARAMS_ERROR);
         }
-
-
+        //存储成功的sign
+        redisTemplate.opsForHash().put("signNonce_map",sign+nonce,true);
         if(StringUtils.isBlank(url)||interfaceId==null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -240,20 +242,18 @@ public class InterfaceInfoController {
         }
         if(!StringUtils.equals(url,interfaceInfo.getUrl())&&StringUtils.equalsIgnoreCase("GET",interfaceInfo.getMethod())){
             log.info("执行get的路径参数请求");
-            String result = interfaceInfoService.getWithPathParameters(url);
+            String result = interfaceInfoService.getWithPathParameters(url,sign+nonce,userId);
             return ResultUtils.success(result);
         }
         //其他情况
         //1.get请求但参数为JSON格式
         if(StringUtils.equalsIgnoreCase("GET",interfaceInfo.getMethod())&& JSONUtil.isTypeJSON(requestBody)){
-            log.info("执行post参数get请求");
-            String result=interfaceInfoService.getWithJsonParameters(url,requestBody);
+            String result=interfaceInfoService.getWithJsonParameters(url,requestBody,sign+nonce,userId);
             return ResultUtils.success(result);
         }
         //2.post请求
         if(StringUtils.equalsIgnoreCase("POST",interfaceInfo.getMethod())){
-            log.info("执行POST请求");
-            String result=interfaceInfoService.postWithJson(url,requestBody);
+            String result=interfaceInfoService.postWithJson(url,requestBody,sign+nonce,userId);
             return ResultUtils.success(result);
         }
 

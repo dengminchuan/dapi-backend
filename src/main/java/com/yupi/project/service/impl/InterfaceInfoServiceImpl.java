@@ -45,25 +45,28 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
     }
 
     @Override
-    public String getWithPathParameters(String url) {
+    public String getWithPathParameters(String url,String signNonce,Long userId) {
         //访问网址
-        try (HttpResponse httpResponse = HttpRequest.get(url).execute()) {
+        try (HttpResponse httpResponse = HttpRequest.get(url).header("signNonce",signNonce).
+                header("userId", String.valueOf(userId)).execute()) {
             String body = httpResponse.body();
             return body;
         }
     }
 
     @Override
-    public String getWithJsonParameters(String url, String requestBody) {
-        try (HttpResponse httpResponse = HttpRequest.get(url).body(requestBody).execute()) {
+    public String getWithJsonParameters(String url, String requestBody,String signNonce,Long userId) {
+        try (HttpResponse httpResponse = HttpRequest.get(url).header("signNonce",signNonce).
+                header("userId", String.valueOf(userId)).body(requestBody).execute()) {
             String body = httpResponse.body();
             return body;
         }
     }
 
     @Override
-    public String postWithJson(String url, String requestBody) {
-        try (HttpResponse httpResponse = HttpRequest.post(url).body(requestBody).execute()) {
+    public String postWithJson(String url, String requestBody,String signNonce,Long userId) {
+        try (HttpResponse httpResponse = HttpRequest.post(url).header("signNonce",signNonce).
+                header("userId", String.valueOf(userId)).body(requestBody).execute()) {
             String body = httpResponse.body();
             return body;
         }

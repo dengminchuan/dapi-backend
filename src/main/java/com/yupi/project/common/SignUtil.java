@@ -39,7 +39,6 @@ public class SignUtil {
         for(int i=0;i<args.length;i++){
             stringBuilder.append(args[i]);
         }
-        //todo:参数不变md5加密后的数不会变，要制造会变化的sign值
         stringBuilder.append(SALT);
         String sign2 = SecureUtil.md5(stringBuilder.toString());
         log.info("sign:{}",sign);

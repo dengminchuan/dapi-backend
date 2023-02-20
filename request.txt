@@ -325,3 +325,11 @@ userId为:5,请求网址为:http://127.0.0.1:10088/DApi/random/10 23-02-19,00:11
 userId为:5,请求网址为:http://127.0.0.1:10088/DApi/random/10 23-02-19,00:11:50
 userId为:5,请求网址为:http://127.0.0.1:10088/DApi/random/10 23-02-19,00:12:39
 userId为:10,请求网址为:http://127.0.0.1:10088/DApi/random/10 23-02-19,00:18:04
+userId为:10,请求网址为:http://127.0.0.1:10088/DApi/random/10 23-02-19,22:38:36
+userId为:10,请求网址为:http://127.0.0.1:10088/DApi/random/10 23-02-19,22:38:40
+userId为:10,请求网址为:http://127.0.0.1:10088/DApi/random/10 23-02-19,22:38:41
+userId为:1,请求网址为:http://localhost:10088/DApi/random/20 23-02-20,14:27:46
+userId为:1,请求网址为:http://localhost:10088/DApi/random/10 23-02-20,14:27:57
+userId为:1,请求网址为:http://localhost:10088/DApi/random/10 23-02-20,14:28:00
+userId为:1,请求网址为:http://localhost:10088/DApi/random/20 23-02-20,14:28:59
+userId为:1,请求网址为:http://localhost:10088/DApi/random/20 23-02-20,14:29:02

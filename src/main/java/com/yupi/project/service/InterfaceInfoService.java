@@ -15,11 +15,11 @@ public interface InterfaceInfoService extends IService<InterfaceInfo> {
 
     void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add);
 
-   String getWithPathParameters(String url);
+   String getWithPathParameters(String url,String signNonce,Long userId);
 
-    String getWithJsonParameters(String url,String requestBody);
+    String getWithJsonParameters(String url,String requestBody,String signNonce,Long userId);
 
-    String postWithJson(String url, String requestBody);
+    String postWithJson(String url, String requestBody,String signNonce,Long userId);
 
     Page<InterfaceInfo> searchByCondition(BaseSearch baseSearch);
 }
