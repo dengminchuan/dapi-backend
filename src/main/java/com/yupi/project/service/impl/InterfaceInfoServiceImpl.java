@@ -9,13 +9,18 @@ import com.yupi.project.common.BaseSearch;
 import com.yupi.project.common.ErrorCode;
 import com.yupi.project.exception.BusinessException;
 import com.yupi.project.mapper.InterfaceInfoMapper;
+import com.yupi.project.mapper.UserInterfaceMapper;
 import com.yupi.project.model.entity.InterfaceInfo;
+import com.yupi.project.model.entity.UserInterface;
 import com.yupi.project.service.InterfaceInfoService;
+import com.yupi.project.service.UserInterfaceService;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
 * @author lv jiang er hao
@@ -26,6 +31,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, InterfaceInfo>
     implements InterfaceInfoService {
+    @Resource
+    private UserInterfaceService userInterfaceService;
+    @Resource
+    private UserInterfaceMapper userInterfaceMapper;
 
     @Override
     public void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add) {
@@ -50,7 +59,19 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
         try (HttpResponse httpResponse = HttpRequest.get(url).header("signNonce",signNonce).
                 header("userId", String.valueOf(userId)).execute()) {
             String body = httpResponse.body();
+            updateInterfaceCount(userId,httpResponse);
             return body;
+        }
+    }
+
+    /**
+     * 访问成功后次数-1
+     * @param userId 调用者
+     * @param httpResponse 接口返回信息
+     */
+    private void updateInterfaceCount(Long userId,HttpResponse httpResponse) {
+        if(httpResponse.getStatus()==200){
+            userInterfaceMapper.subInterfaceLeftCountById(userId,1);
         }
     }
 
@@ -59,6 +80,7 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
         try (HttpResponse httpResponse = HttpRequest.get(url).header("signNonce",signNonce).
                 header("userId", String.valueOf(userId)).body(requestBody).execute()) {
             String body = httpResponse.body();
+            updateInterfaceCount(userId,httpResponse);
             return body;
         }
     }
@@ -68,6 +90,7 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
         try (HttpResponse httpResponse = HttpRequest.post(url).header("signNonce",signNonce).
                 header("userId", String.valueOf(userId)).body(requestBody).execute()) {
             String body = httpResponse.body();
+            updateInterfaceCount(userId,httpResponse);
             return body;
         }
     }

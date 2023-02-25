@@ -225,7 +225,6 @@ public class InterfaceInfoController {
         boolean signRight = SignUtil.checkSign(sign,nonce,userKey.getAccessKey(), String.valueOf(userId), userKey.getSecretKey());
         if(!signRight){
             //签名校验失败
-            log.info("签名校验失败");
             return ResultUtils.error(ErrorCode.PARAMS_ERROR);
         }
         //存储成功的sign
@@ -241,8 +240,8 @@ public class InterfaceInfoController {
             return ResultUtils.error(ErrorCode.FORBIDDEN_ERROR);
         }
         if(!StringUtils.equals(url,interfaceInfo.getUrl())&&StringUtils.equalsIgnoreCase("GET",interfaceInfo.getMethod())){
-            log.info("执行get的路径参数请求");
             String result = interfaceInfoService.getWithPathParameters(url,sign+nonce,userId);
+
             return ResultUtils.success(result);
         }
         //其他情况

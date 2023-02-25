@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yupi.project.common.BaseSearch;
 import com.yupi.project.model.entity.InterfaceInfo;
-import com.yupi.project.model.entity.Post;
 
 /**
 * @author lv jiang er hao

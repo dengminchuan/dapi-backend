@@ -14,5 +14,14 @@
             <result property="totalCount" column="totalCount" jdbcType="BIGINT"/>
             <result property="leftCount" column="leftCount" jdbcType="BIGINT"/>
     </resultMap>
+    <update id="subInterfaceLeftCountById">
+        update user_interface set leftCount=leftCount-#{changeNumber} where userId=#{userId}
+    </update>
+    <update id="addInterfaceLeftCountById">
+        update user_interface set leftCount=leftCount+#{changeNumber},totalCount=totalCount+#{changeNumber} where userId=#{userId}
+    </update>
+    <select id="getLeftCountById" resultType="integer">
+        select leftCount from user_interface where userId=#{userId}
+    </select>
 
 </mapper>

@@ -10,5 +10,8 @@ import com.yupi.project.model.entity.UserInterface;
 * @createDate 2023-02-11 21:13:21
 */
 public interface UserInterfaceService extends IService<UserInterface> {
+    Integer updateInterfaceLeftCountById(Long userId,Boolean isAdd,Integer changeNumber);
+
+    Integer getLeftCount(Long userId);
 
 }
