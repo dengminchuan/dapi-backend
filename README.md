@@ -21,9 +21,11 @@
 
 ![](https://cdn.nlark.com/yuque/0/2023/jpeg/35193804/1677503480877-ffcdc934-5893-47e7-b560-96ae1bb887cd.jpeg)<br />页面截图:<br />![image.png](https://cdn.nlark.com/yuque/0/2023/png/35193804/1677501964896-c809ed35-bb0b-452c-bacf-157d8df4e0af.png#averageHue=%23f2f2f2&clientId=u04eeffee-36a0-4&from=paste&height=762&id=ub40ef2e0&name=image.png&originHeight=952&originWidth=1793&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=117109&status=done&style=none&taskId=u9960b9b7-434b-4366-9222-20e82c36d60&title=&width=1434.4)
 
-- 版本更新方向:
-      1. 在接口调用时提供传送图片功能，复制调用接口后的结果。
-      2. 前端页面重构
-      3. 添加更多接口，增加接口类型
-      4. 增加接口提供与接口调用之间的正反馈机制🍬🍬🍬...
+<ul>版本更新方向:
+      <li>&emsp;在接口调用时提供传送图片功能，复制调用接口后的结果。</li>
+      <li>&emsp;前端页面重构</li>
+      <li>&emsp;添加更多接口，增加接口类型</li>
+      <li>&emsp;增加接口提供与接口调用之间的正反馈机制🍬🍬🍬...</li>
 
+</ul>
+https://www.yuque.com/u33691134/dgsbgp/huk37kf37tya91zt
