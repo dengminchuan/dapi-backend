@@ -8,13 +8,12 @@
 - 更多功能正在逐步开发中...
 
 技术选型：
-
    - 核心框架:SpringBoot 2.3.9
    - Mybatis,MybatisPlus作为持久层和业务层
    - Mysql+Redis
    - SpringCloud Gateway ,SpringCloud Alibaba(Nacos+Feign)
    - Hutool工具类、commons-lang3工具类、Gson工具类
-
+   - SpringBoot Init(By程序员鱼皮)
 开发流程图:<br />![](https://cdn.nlark.com/yuque/0/2023/jpeg/35193804/1677501935298-e6e5c7ee-bce1-49de-8f68-968cb383aed8.jpeg)
 
 - 结构图
